@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="ftms-desktop">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/desktop/src/main/java" />
+    </SOURCES>
+  </library>
+</component>

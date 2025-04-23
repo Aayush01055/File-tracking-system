@@ -1,0 +1,103 @@
+/* Ultra-Modern Flat Design for JavaFX */
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-background-color: #f8fafc;
+}
+
+/* Minimalist Header */
+.header {
+    -fx-padding: 24px;
+    -fx-text-fill: white;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-border-color: #334155;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/* Clean Navigation */
+.nav-bar {
+    -fx-background-color: #ffffff;
+    -fx-padding: 16px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0;
+}
+
+/* Flat Design Buttons */
+.button, .nav-button {
+    -fx-background-color: #4f46e5;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-cursor: hand;
+}
+
+.button:hover, .nav-button:hover {
+    -fx-background-color: #4338ca;
+}
+
+.button:pressed, .nav-button:pressed {
+    -fx-background-color: #3730a3;
+}
+
+/* Minimal Input Fields */
+.text-field, .password-field, .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0;
+    -fx-padding: 12px;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #6366f1;
+    -fx-border-width: 2px;
+}
+
+/* Flat Cards */
+.card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-padding: 24px;
+}
+
+/* Typography */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+    -fx-font-weight: 500;
+}
+
+/* Status Messages */
+.success-message {
+    -fx-text-fill: #10b981;
+    -fx-font-weight: 600;
+}
+
+.error-message {
+    -fx-text-fill: #ef4444;
+    -fx-font-weight: 600;
+}
+
+/* Simplified Combo Box */
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1px;
+}
+
+.combo-box .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+}
+
+/* Minimal Scrollbars */
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 0;
+}

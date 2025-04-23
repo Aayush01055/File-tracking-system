@@ -1,0 +1,14 @@
+com\ftms\backend\config\WebConfig.class
+com\ftms\backend\entity\AuditLog.class
+com\ftms\backend\FtmsBackendApplication.class
+com\ftms\backend\controller\AuthController.class
+com\ftms\backend\entity\File.class
+com\ftms\backend\repository\FileRepository.class
+com\ftms\backend\controller\AuditController.class
+com\ftms\backend\repository\UserRepository.class
+Main.class
+com\ftms\backend\controller\FileController.class
+com\ftms\backend\entity\User.class
+com\ftms\backend\repository\AuditLogRepository.class
+com\ftms\backend\controller\UserController.class
+com\ftms\backend\config\JpaConfig.class

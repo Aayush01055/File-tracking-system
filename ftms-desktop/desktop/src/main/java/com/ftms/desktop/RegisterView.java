@@ -1,0 +1,204 @@
+package com.ftms.desktop;
+
+import com.google.gson.Gson;
+import javafx.application.Platform;
+import javafx.collections.FXCollections; // For ComboBox
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos; // For alignment
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority; // For layout
+import javafx.scene.layout.VBox; // Use VBox as root
+import okhttp3.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays; // For role options
+import java.util.List;
+
+public class RegisterView extends VBox { // Changed to VBox
+    private final OkHttpClient client = new OkHttpClient();
+    private final Gson gson;
+
+    // UI Elements
+    private final TextField usernameField;
+    private final PasswordField passwordField;
+    private final ComboBox<String> roleComboBox;
+    private final Button registerButton;
+    private final Label resultLabel;
+
+    private static final List<String> ROLE_OPTIONS = Arrays.asList("Admin", "Officer"); // Display values
+
+    public RegisterView() {
+        gson = GsonConfig.getGson();
+
+        // --- UI Components ---
+        Label header = new Label("Register New User");
+        header.getStyleClass().add("header");
+        header.setMaxWidth(Double.MAX_VALUE);
+        header.setAlignment(Pos.CENTER);
+
+        Label usernameLabel = new Label("Username:");
+        usernameLabel.getStyleClass().add("label");
+        usernameField = new TextField();
+        usernameField.setPromptText("Enter username");
+        usernameField.getStyleClass().add("text-field");
+
+        Label passwordLabel = new Label("Password:");
+        passwordLabel.getStyleClass().add("label");
+        passwordField = new PasswordField();
+        passwordField.setPromptText("Enter password");
+        passwordField.getStyleClass().add("text-field");
+
+        Label roleLabel = new Label("Role:");
+        roleLabel.getStyleClass().add("label");
+        roleComboBox = new ComboBox<>(FXCollections.observableArrayList(ROLE_OPTIONS));
+        roleComboBox.setPromptText("Select role");
+        roleComboBox.getStyleClass().add("combo-box");
+        roleComboBox.setMaxWidth(Double.MAX_VALUE); // Allow dropdown to expand
+
+        registerButton = new Button("Register User");
+        registerButton.getStyleClass().add("button");
+        registerButton.setMaxWidth(Double.MAX_VALUE);
+
+
+        resultLabel = new Label();
+        resultLabel.getStyleClass().add("label"); // Default style
+        resultLabel.setWrapText(true);
+        resultLabel.setMaxWidth(Double.MAX_VALUE);
+
+
+        // --- Layout using GridPane ---
+        GridPane form = new GridPane();
+        form.setAlignment(Pos.CENTER);
+        form.setHgap(10);
+        form.setVgap(10);
+        form.setPadding(new Insets(25));
+        form.setMaxWidth(400); // Limit width
+
+
+        // Row 0: Username
+        form.add(usernameLabel, 0, 0);
+        form.add(usernameField, 1, 0);
+        GridPane.setHgrow(usernameField, Priority.ALWAYS);
+
+        // Row 1: Password
+        form.add(passwordLabel, 0, 1);
+        form.add(passwordField, 1, 1);
+        GridPane.setHgrow(passwordField, Priority.ALWAYS);
+
+        // Row 2: Role
+        form.add(roleLabel, 0, 2);
+        form.add(roleComboBox, 1, 2);
+
+        // Row 3: Register Button (Span 2 columns)
+        form.add(registerButton, 0, 3, 2, 1);
+        GridPane.setValignment(registerButton, VPos.CENTER);
+
+        // Row 4: Result Label (Span 2 columns)
+        form.add(resultLabel, 0, 4, 2, 1);
+        resultLabel.setAlignment(Pos.CENTER);
+
+
+        // --- Main VBox Setup ---
+        setSpacing(15); // Spacing between header and form
+        setAlignment(Pos.CENTER); // Center the grid within the VBox
+        setPadding(new Insets(20)); // Padding around the VBox
+        getChildren().addAll(header, form);
+
+        // Load CSS
+        loadStyles();
+
+
+        // --- Action Listener ---
+        registerButton.setOnAction(e -> {
+            String inputUsername = usernameField.getText().trim();
+            String inputPassword = passwordField.getText();
+            String selectedRoleDisplay = roleComboBox.getSelectionModel().getSelectedItem();
+
+            if (inputUsername.isEmpty() || inputPassword.isEmpty()) {
+                setResultMessage("Error: Username and password cannot be empty.", true);
+                return;
+            }
+            if (selectedRoleDisplay == null) {
+                setResultMessage("Error: Please select a role.", true);
+                return;
+            }
+
+            // Map display role ("Admin", "Officer") to backend value ("admin", "officer")
+            String roleValue = selectedRoleDisplay.equals("Admin") ? "admin" : "officer";
+
+            setResultMessage("Registering user...", false);
+
+
+            new Thread(() -> {
+                try {
+                    // Create User object for the request body - assuming UserID is generated by backend
+                    User newUser = new User(null, inputUsername, inputPassword, roleValue);
+
+                    RequestBody body = RequestBody.create(
+                            gson.toJson(newUser), // Send User object
+                            MediaType.parse("application/json")
+                    );
+                    Request request = new Request.Builder()
+                            .url("http://localhost:8080/api/auth/register")
+                            .post(body)
+                            // Include User-Id of the admin performing the registration
+                            .header("User-Id", LoginView.getUserId() != null ? LoginView.getUserId() : "UNKNOWN") // Add logged-in admin's ID
+                            .build();
+
+                    try (Response response = client.newCall(request).execute()) {
+                        String responseBody = response.body() != null ? response.body().string() : "(No response body)";
+                        if (response.isSuccessful()) {
+                            Platform.runLater(() -> {
+                                setResultMessage("User '" + inputUsername + "' registered successfully!", false);
+                                System.out.println("Registration successful: username=" + inputUsername + ", role=" + roleValue);
+                                // Clear fields on success
+                                usernameField.clear();
+                                passwordField.clear();
+                                roleComboBox.getSelectionModel().clearSelection();
+                            });
+                        } else {
+                            final String errorMsg = "Registration failed: " + response.code() + " " + response.message() + " (" + responseBody + ")";
+                            Platform.runLater(() -> {
+                                setResultMessage(errorMsg, true);
+                                System.err.println(errorMsg);
+                            });
+                        }
+                    }
+                } catch (IOException | com.google.gson.JsonSyntaxException ex) {
+                    final String errorMsg = "Error during registration: " + ex.getMessage();
+                    Platform.runLater(() -> {
+                        setResultMessage(errorMsg, true);
+                        System.err.println("Registration error: " + ex.getMessage());
+                    });
+                }
+            }).start();
+        });
+    }
+
+    private void loadStyles() {
+        URL cssUrl = getClass().getResource("/css/styles.css");
+        if (cssUrl != null) {
+            getStylesheets().add(cssUrl.toExternalForm());
+            System.out.println("RegisterView CSS loaded.");
+        } else {
+            System.err.println("Error: RegisterView styles.css not found.");
+        }
+    }
+
+    // Helper to set result message and style
+    private void setResultMessage(String message, boolean isError) {
+        resultLabel.setText(message);
+        resultLabel.getStyleClass().removeAll("success-message", "error-message"); // Clear previous
+        if (isError) {
+            resultLabel.getStyleClass().add("error-message");
+        } else {
+            resultLabel.getStyleClass().add("success-message");
+        }
+    }
+
+    public VBox getView() { // Return VBox
+        return this;
+    }
+}
