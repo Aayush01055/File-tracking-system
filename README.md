@@ -1,6 +1,6 @@
 # File Tracking and Management System
 
-The File Tracking System is a web application designed to help organizations manage, track, and audit files efficiently. It provides a backend built with Java (Spring Boot, Maven) and a user-friendly frontend built with React.
+The File Tracking System is a multi-platform application designed to help organizations manage, track, and audit files efficiently. It provides a backend built with Java (Spring Boot, Maven), a user-friendly web frontend built with React, and a desktop client built with JavaFX.
 
 ---
 
@@ -11,6 +11,7 @@ The File Tracking System is a web application designed to help organizations man
 - **Audit Logging**: Every file operation (creation, update, etc.) is logged with user and timestamp for traceability.
 - **REST API**: Backend exposes RESTful endpoints for all major operations.
 - **React Frontend**: Responsive web UI for interacting with the system.
+- **Desktop Client**: JavaFX-based desktop application for file management and tracking.
 
 ---
 
@@ -29,7 +30,11 @@ File-tracking-system/
 │   ├── src/
 │   └── README.md
 │
-└── openjfx-*/     # JavaFX SDK for UI (if needed)
+├── desktop/       # JavaFX desktop client (UI for desktop usage)
+│   ├── src/
+│   └── README.md
+│
+└── openjfx-*/     # JavaFX SDK for UI
 ```
 
 ---
@@ -50,7 +55,7 @@ File-tracking-system/
 
 ---
 
-## Frontend
+## Web Frontend
 
 - **Start the App:**
   ```bash
@@ -62,6 +67,22 @@ File-tracking-system/
   - `npm start` — Start development server
   - `npm test` — Run unit tests
   - `npm run build` — Production build
+
+---
+
+## Desktop Client
+
+- **Requirements:** Java 17+, JavaFX SDK (see `openjfx-*` directory)
+- **Build & Run:**
+  ```bash
+  cd desktop
+  # Example Maven command, customize as per desktop/README.md instructions
+  mvn compile
+  mvn exec:java
+  ```
+- **Features:**
+  - GUI for file management and tracking using JavaFX
+  - Connects to the backend API for full functionality
 
 ---
 
@@ -78,9 +99,9 @@ File-tracking-system/
 ## Technologies Used
 
 - **Backend:** Java, Spring Boot, Spring Data JPA, Maven
-- **Frontend:** React, Create React App, JavaScript
+- **Web Frontend:** React, Create React App, JavaScript
+- **Desktop Client:** JavaFX, Java 17+, Maven
 - **Database:** (Configure as needed in backend for JPA support)
-- **Others:** JavaFX SDK (for optional UI components)
 
 ---
 
